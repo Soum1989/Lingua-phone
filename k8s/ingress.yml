@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: linguabot-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.global-static-ip-name: "linguabot-ip"
+spec:
+  tls:
+  - hosts:
+    - linguabot.example.com
+    secretName: linguabot-tls
+  rules:
+  - host: linguabot.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: linguabot-service
+            port:
+              number: 80
