@@ -30,6 +30,9 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Serve static files from the frontend build
+app.use(express.static('../dist'));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
@@ -41,6 +44,11 @@ app.use('/api/translate', translationRoutes);
 app.use('/api/speech-to-text', upload.single('audio'), speechRoutes);
 app.use('/api/text-to-speech', speechRoutes);
 app.use('/api/pronunciation-score', upload.single('audio'), pronunciationRoutes);
+
+// Serve frontend for all non-API routes
+app.get('*', (req, res) => {
+  res.sendFile('index.html', { root: '../dist' });
+});
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
