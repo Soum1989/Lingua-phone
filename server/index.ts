@@ -3,10 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import { chatRoutes } from './routes/chat.js';
-import { translationRoutes } from './routes/translation.js';
-import { speechRoutes } from './routes/speech.js';
-import { pronunciationRoutes } from './routes/pronunciation.js';
+import { chatRoutes } from './routes/chat';
+import { translationRoutes } from './routes/translation';
+import { speechRoutes } from './routes/speech';
+import { pronunciationRoutes } from './routes/pronunciation';
 
 dotenv.config();
 

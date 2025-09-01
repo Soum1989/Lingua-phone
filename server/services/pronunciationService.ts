@@ -1,4 +1,4 @@
-import { PronunciationScore } from '../../src/types/index.js';
+import { PronunciationScore } from '../../src/types/index';
 
 export class PronunciationService {
   async scorePronunciation(audioBuffer: Buffer, expectedText: string, language: string): Promise<PronunciationScore> {

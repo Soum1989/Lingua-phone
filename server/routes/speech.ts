@@ -1,5 +1,5 @@
 import express from 'express';
-import { SpeechService } from '../services/speechService.js';
+import { SpeechService } from '../services/speechService';
 
 const router = express.Router();
 const speechService = new SpeechService();

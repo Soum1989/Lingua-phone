@@ -1,5 +1,5 @@
 import express from 'express';
-import { PronunciationService } from '../services/pronunciationService.js';
+import { PronunciationService } from '../services/pronunciationService';
 
 const router = express.Router();
 const pronunciationService = new PronunciationService();

@@ -1,5 +1,5 @@
 import express from 'express';
-import { ChatService } from '../services/chatService.js';
+import { ChatService } from '../services/chatService';
 
 const router = express.Router();
 const chatService = new ChatService();

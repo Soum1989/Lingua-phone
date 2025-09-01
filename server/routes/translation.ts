@@ -1,5 +1,5 @@
 import express from 'express';
-import { TranslationService } from '../services/translationService.js';
+import { TranslationService } from '../services/translationService';
 
 const router = express.Router();
 const translationService = new TranslationService();
