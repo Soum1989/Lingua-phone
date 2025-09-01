@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import path from 'path';
 import { chatRoutes } from './routes/chat';
 import { translationRoutes } from './routes/translation';
 import { speechRoutes } from './routes/speech';
@@ -31,7 +32,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files from the frontend build
-app.use(express.static('../dist'));
+app.use(express.static(path.join(__dirname, '../../dist')));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -47,7 +48,7 @@ app.use('/api/pronunciation-score', upload.single('audio'), pronunciationRoutes)
 
 // Serve frontend for all non-API routes
 app.get('*', (req, res) => {
-  res.sendFile('index.html', { root: '../dist' });
+  res.sendFile('index.html', { root: path.join(__dirname, '../../dist') });
 });
 
 // Error handling middleware
