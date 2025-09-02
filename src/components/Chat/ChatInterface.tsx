@@ -65,16 +65,25 @@ export const ChatInterface: React.FC = () => {
       const recording = await stopRecording();
       if (recording) {
         try {
+          setLoading(true);
           const transcribedText = await apiService.speechToText(recording.blob, currentLanguage);
           setInputText(transcribedText);
           toast.success('Voice input captured!');
         } catch (error) {
           console.error('Error transcribing audio:', error);
-          toast.error('Failed to transcribe audio');
+          toast.error('Failed to transcribe audio. Please try again.');
+        } finally {
+          setLoading(false);
         }
       }
     } else {
-      await startRecording();
+      try {
+        await startRecording();
+        toast.success('Recording started. Speak now!');
+      } catch (error) {
+        console.error('Error starting recording:', error);
+        toast.error('Failed to start recording. Please check microphone permissions.');
+      }
     }
   };
 

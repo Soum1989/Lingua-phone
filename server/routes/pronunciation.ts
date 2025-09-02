@@ -1,10 +1,12 @@
 import express from 'express';
+import multer from 'multer';
 import { PronunciationService } from '../services/pronunciationService';
 
 const router = express.Router();
 const pronunciationService = new PronunciationService();
+const upload = multer();
 
-router.post('/', async (req, res) => {
+router.post('/', upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({

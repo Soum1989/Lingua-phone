@@ -1,11 +1,13 @@
 import express from 'express';
+import multer from 'multer';
 import { SpeechService } from '../services/speechService';
 
 const router = express.Router();
 const speechService = new SpeechService();
+const upload = multer();
 
 // Speech to Text
-router.post('/speech-to-text', async (req, res) => {
+router.post('/speech-to-text', upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({

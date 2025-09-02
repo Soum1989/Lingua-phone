@@ -67,7 +67,7 @@ class ApiService {
     formData.append('audio', audioBlob);
     formData.append('language', language);
 
-    const response = await fetch(`${API_BASE_URL}/speech-to-text`, {
+    const response = await fetch(`${API_BASE_URL}/speech/speech-to-text`, {
       method: 'POST',
       body: formData,
     });
@@ -81,7 +81,7 @@ class ApiService {
   }
 
   async textToSpeech(text: string, language: string): Promise<string> {
-    const response = await fetch(`${API_BASE_URL}/text-to-speech`, {
+    const response = await fetch(`${API_BASE_URL}/speech/text-to-speech`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ class ApiService {
     formData.append('expectedText', expectedText);
     formData.append('language', language);
 
-    const response = await fetch(`${API_BASE_URL}/pronunciation-score`, {
+    const response = await fetch(`${API_BASE_URL}/pronunciation`, {
       method: 'POST',
       body: formData,
     });
