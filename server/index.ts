@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { chatRoutes } from './routes/chat';
-import { translationRoutes } from './routes/translation';
-import { speechRoutes } from './routes/speech';
-import { pronunciationRoutes } from './routes/pronunciation';
+import { chatRoutes } from './routes/chat.js';
+import { translationRoutes } from './routes/translation.js';
+import { speechRoutes } from './routes/speech.js';
+import { pronunciationRoutes } from './routes/pronunciation.js';
 
 dotenv.config();
 
@@ -36,7 +36,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files from the frontend build
-app.use(express.static(path.join(__dirname, '../../dist')));
+const distPath = path.join(__dirname, '../../dist');
+app.use(express.static(distPath));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -52,7 +53,7 @@ app.use('/api/pronunciation-score', upload.single('audio'), pronunciationRoutes)
 
 // Serve frontend for all non-API routes
 app.get('*', (req, res) => {
-  res.sendFile('index.html', { root: path.join(__dirname, '../../dist') });
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // Error handling middleware
