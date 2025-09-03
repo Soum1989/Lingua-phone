@@ -43,7 +43,7 @@ class ApiService {
   }
 
   async translateText(text: string, targetLanguage: string, sourceLanguage?: string): Promise<TranslationResponse> {
-    const response = await fetch(`${API_BASE_URL}/translate`, {
+    const response = await fetch(`${API_BASE_URL}/translation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

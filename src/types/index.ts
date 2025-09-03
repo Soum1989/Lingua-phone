@@ -70,3 +70,11 @@ export interface VoiceRecording {
   url: string;
   duration: number;
 }
+
+export interface PronunciationScore {
+  accuracy: number;
+  fluency: number;
+  completeness: number;
+  overall: number;
+  feedback: string;
+}
