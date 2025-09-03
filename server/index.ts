@@ -6,10 +6,10 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { chatRoutes } from './routes/chat';
-import { translationRoutes } from './routes/translation';
-import { speechRoutes } from './routes/speech';
-import { pronunciationRoutes } from './routes/pronunciation';
+import { chatRoutes } from './routes/chat.js';
+import { translationRoutes } from './routes/translation.js';
+import { speechRoutes } from './routes/speech.js';
+import { pronunciationRoutes } from './routes/pronunciation.js';
 
 dotenv.config();
 
@@ -81,7 +81,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-const PORT = parseInt(process.env.PORT || '3001', 10);
+const PORT = parseInt(process.env.PORT || '5173', 10);
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
