@@ -2,13 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { chatRoutes } from './routes/chat';
-import { translationRoutes } from './routes/translation';
-import { speechRoutes } from './routes/speech';
-import { pronunciationRoutes } from './routes/pronunciation';
+import { chatRoutes } from './routes/chat.js';
+import { translationRoutes } from './routes/translation.js';
+import { speechRoutes } from './routes/speech.js';
+import { pronunciationRoutes } from './routes/pronunciation.js';
 
 dotenv.config();
 
@@ -16,63 +15,75 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const upload = multer();
 
-app.use(helmet());
-app.use(cors());
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true }));
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+      mediaSrc: ["'self'", "blob:", "data:"]
+    }
+  }
+}));
 
-// Mount API routers under /api
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? false : true,
+  credentials: true
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// API routes
 app.use('/api/chat', chatRoutes);
 app.use('/api/translation', translationRoutes);
 app.use('/api/speech', speechRoutes);
 app.use('/api/pronunciation', pronunciationRoutes);
 
-// Serve frontend static assets if present
-const clientDist = path.join(__dirname, '..', 'dist');
-const clientIndex = path.join(clientDist, 'index.html');
-
-if (require('fs').existsSync(clientDist)) {
-  app.use(express.static(clientDist));
-  // SPA fallback
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) {
-      return res.status(404).json({ error: 'Route not found', path: req.path });
-    }
-    res.sendFile(clientIndex);
-  });
-} else {
-  // Development fallback: return a helpful HTML pointing to the vite dev server
-  app.get('/', (_req, res) => {
-    res.send(`
-      <html>
-        <head><meta charset="utf-8"/><title>Lingua - Dev server</title></head>
-        <body>
-          <h1>Lingua backend is running</h1>
-          <p>The frontend dev server is likely running separately (vite). Open the client at <a href="http://localhost:5173">http://localhost:5173</a></p>
-          <p>API endpoints are mounted under <code>/api/*</code>.</p>
-        </body>
-      </html>
-    `);
-  });
-}
-
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
-// 404 handler for unmatched API routes (already handled above for SPA)
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    path: req.path,
+// Serve static files from the React app build
+const clientBuild = path.join(__dirname, '..', 'dist');
+app.use(express.static(clientBuild));
+
+// Catch all handler: send back React's index.html file for SPA routing
+app.get('*', (req, res) => {
+  // Don't serve index.html for API routes
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ 
+      error: 'API route not found', 
+      path: req.path 
+    });
+  }
+  
+  res.sendFile(path.join(clientBuild, 'index.html'));
+});
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Server error:', err);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
 
 const PORT = parseInt(process.env.PORT || '5173', 10);
-app.listen(PORT, () => {
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📁 Serving static files from: ${clientBuild}`);
 });
